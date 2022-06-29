@@ -3,6 +3,7 @@ export function fetchCountries(name) {
   const BASE_URL = 'https://restcountries.com/v2/name/';
   const itemToFind = `${BASE_URL}${name}${options}`;
   return fetch(itemToFind).then(response => {
+    console.log(response);
     if (!response.ok) {
       throw new Error(response.status);
     }
