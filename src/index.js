@@ -1,15 +1,28 @@
 import './css/styles.css';
-import lodash from 'lodash.debounce';
+import debounce from 'lodash.debounce';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import fetchCountries from './fetchCountries.js';
 const DEBOUNCE_DELAY = 300;
 const userCountry = document.querySelector('input');
 const countryList = document.querySelector('.country-list');
+let userInput;
 
-userCountry.addEventListener('input', () => {
-  fetchCountries()
-    .then(countrys => renderCountryList(countrys))
-    .catch(error => console.log(error));
-});
+// console.log(userInput);
+userCountry.addEventListener(
+  'input',
+  debounce(fetchCountries => {
+    userInput = userCountry.formTarget.trim();
+    fetchCountries(userInput)
+      .then(countrys => renderCountryList(countrys))
+      .catch(error => {
+        if (countrys.length > 9) {
+          Notify.info(
+            'Too many matches found. Please enter a more specific name.'
+          );
+        }
+      });
+  }, DEBOUNCE_DELAY)
+);
 
 function renderCountryList(countrys) {
   const markup = countrys
